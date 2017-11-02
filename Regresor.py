@@ -50,26 +50,19 @@ def standarize(x_train, x_val):
     return (x_t, x_v)
 
 
-def unstandardized_regression(X_train,Y_train, X_val,Y_val):
+def unstandardized_regression(X_train,Y_train, X_val,Y_val,ratio):
     #Regression with all the parameters at the same time
     r = regression(X_train, Y_train)
-    error = mean_squared_error(Y_val, r.predict(X_val))
-    print("Error Unstandarized ", error)
-    
-    # Prediction Plot
-    plt.title("Regression on all unstandardized parameters")
-    plt.plot(Y_val,label="Test Set",c='red')
-    plt.plot(r.predict(X_val),label="Prediction",c='blue')
-    plt.legend()
-    plt.show()
-    
-    
+    return mean_squared_error(Y_val, r.predict(X_val))
+
+
 # Regression with each parameter individually"""
-def single_parameter_regression(X_train,Y_train,X_val,Y_val,plot_histogram=False,plot_results=True):
+def single_parameter_regression(X_train,Y_train,X_val,Y_val,ratio,iteration,variation,plot_histogram=False,plot_results=True):
     
     color_list = ['red','dodgerblue','green','slateblue','lime','maroon','orange']
     
     tags = data.iloc[0,3:].values
+    error = []
     
     for i in range(X_train.shape[1]):
         x_t = X_train[:, i]
@@ -78,47 +71,37 @@ def single_parameter_regression(X_train,Y_train,X_val,Y_val,plot_histogram=False
         x_v = np.reshape(x_v,(x_v.shape[0],1))
         
         regr = regression(x_t, Y_train)
-        error = mean_squared_error(Y_val, regr.predict(x_v))
-        
-        if plot_results:
+        error.append(mean_squared_error(Y_val, regr.predict(x_v)))
+                
+        if plot_results and variation == 0:
             # Results plot
-            plt.figure(i)
-            plt.title("Regression with parameter: " + tags[i])
-            plt.scatter(x_v[:, 0], y_val, c=color_list[i])
+            plt.figure(str(i) + " Ratio: " + str(ratio))
+            plt.title("Regression with parameter: " + tags[i] + " Split Ratio: " + str(ratio))
+            plt.scatter(x_v[:, 0], Y_val, c=color_list[i])
             plt.plot(x_v[:, 0], regr.predict(x_v), label="Prediction", c='black')
-            #plt.plot(y_val,label="Test Set",c=color_list[i])
-            #plt.plot(regr.predict(x_v),label="Prediction",c='black')
-            #plt.legend()
             plt.show()
 
-            
-            print("Error for attribute ",tags[i], error)
         
-        if plot_histogram:
+        if plot_histogram and iteration == 1 and variation == 0:
             #Histogram plot
-            plt.figure(i * 7)
+            plt.figure("Histogram " + str(i))
             plt.title("Histogram Attribute: " + tags[i])
             plt.hist(x_t,bins=13,range=[np.min(x_t[:,0]),np.max(x_t[:,0])],color=color_list[i])
             plt.show()
             
+    return error
+        
        
-def standardized_regression(X_train,Y_train, X_val, Y_val):
+def standardized_regression(X_train,Y_train, X_val, Y_val,ratio):
     
     # Regression with standarized attributes
     x_s_train, x_s_val = standarize(X_train,X_val)
     s_regr = regression(x_s_train,Y_train)
-    error = mean_squared_error(Y_val, s_regr.predict(x_s_val))
     
-    #Results plot
-    plt.title("Regression on all standarized parameters")
-    plt.plot(Y_val,label="Test Set",c='red')
-    plt.plot(s_regr.predict(x_s_val),label="Prediction",c='blue')
-    plt.legend()
-    plt.show()
-    
-    print("Error standarized ", error)
+    return mean_squared_error(Y_val, s_regr.predict(x_s_val))
+ 
 
-def draw_3d(validation,result):
+def draw_3d(validation,result,ratio,variation):
     regr = regression(validation, result)
     prediction = regr.predict(validation)
 
@@ -139,28 +122,53 @@ def draw_3d(validation,result):
     zplot = W[0] * xplot + W[1] * yplot + W[2]
 
     #dibuixem punts i superficie
-    plt3d = plt.figure('Prova 3d').gca(projection='3d')
-    plt3d.plot_surface(xplot,yplot,zplot, color='red')
-    plt3d.scatter(validation[:,0],validation[:,1],result)
-    plt.show()
-
+     
+    if variation == 0:
+        plt3d = plt.figure('Prova 3d ' + str(ratio)).gca(projection='3d')
+        plt3d.plot_surface(xplot,yplot,zplot, color='red')
+        plt3d.scatter(validation[:,0],validation[:,1],result)
+        plt.show()
+        
+    return mean_squared_error(result,prediction)
 
 
 #reading data from dataset
 data = pd.read_csv("data_akbilgic.csv")
 X = data.iloc[1:, 3:].values.astype('float64')
+X = (X+1) * 1000
 Y = data.iloc[1:, 2].values.astype('float64')
-error = np.ones(np.shape(Y))
+Y = (Y+1) * 1000
+tags = data.iloc[0,3:].values
+
+
 
 #We generate evaluation and training set randomly
-x_train, y_train, x_val, y_val = split_data(X, Y,train_ratio = 0.5)
-#x_train, y_train, x_val, y_val = split_data(X, Y,train_ratio = 0.6)
-#x_train, y_train, x_val, y_val = split_data(X, Y,train_ratio = 0.7)
-#x_train, y_train, x_val, y_val = split_data(X, Y,train_ratio = 0.8)
+for i in range(1,5):
+        
+    error_2attributes = []
+    error_standardized = []
+    error_unstandardized = []
+    error_single_parameter = []
+    ratio = 0.9 - i/float(10)
+    
+    for j in range(20):
+        x_train, y_train, x_val, y_val = split_data(X, Y,train_ratio = ratio)
+        
+        #TODO draw 3d plot with the 2 best attributes 
+        # TODO print mean error for each attribute
+        #error_2attributes.append(draw_3d(x_val[:,:2],np.reshape(y_val,(y_val.shape[0],1)),ratio,j))
+        #error_standardized.append(standardized_regression(x_train,y_train, x_val,y_val,ratio))
+        error_single_parameter.append(single_parameter_regression(x_train,y_train, x_val,y_val,ratio,i,j,plot_histogram=True,plot_results=True))
+        #error_unstandardized.append(unstandardized_regression(x_train,y_train, x_val,y_val,ratio))
 
-draw_3d(x_val[:,:2],np.reshape(y_val,(y_val.shape[0],1)))
-standardized_regression(x_train,y_train, x_val,y_val)
-single_parameter_regression(x_train,y_train, x_val,y_val,plot_histogram=True,plot_results=True)
-unstandardized_regression(x_train,y_train, x_val,y_val)
-
-
+    #print "Error 2 attributtes " + str(reduce(lambda x, y: x + y, error_2attributes) / len(error_2attributes)) + " " + str(ratio)
+    #print "Standardized Error: " + str(reduce(lambda x, y: x + y, error_standardized) / len(error_standardized)) + " " + str(ratio)
+    #print "Unstandardized Error: " + str(reduce(lambda x, y: x + y, error_unstandardized) / len(error_unstandardized)) + " " + str(ratio)
+    print 
+    
+    
+    
+    
+    
+    
+    
