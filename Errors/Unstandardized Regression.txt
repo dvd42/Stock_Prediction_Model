@@ -1,12 +1,13 @@
 Running model with:
 Scale: 1000 
 Variations: 10
+Unstandardized Error: 181.213755 Ratio: 0.8 
+Unstandardized Error: 190.543857 Ratio: 0.7 
+Unstandardized Error: 200.711293 Ratio: 0.6 
+Unstandardized Error: 196.169284 Ratio: 0.5 
+
+
 Running model with:
 Scale: 1000 
 Variations: 10
-Unstandardized Error: 204.910076 Ratio: 0.8 
-Unstandardized Error: 193.921713 Ratio: 0.7 
-Unstandardized Error: 200.599723 Ratio: 0.6 
-Unstandardized Error: 195.939830 Ratio: 0.5 
-
-
+Unstandardized Error: 192.755616 Ratio: 0.8 

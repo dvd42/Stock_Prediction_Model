@@ -174,9 +174,7 @@ def store_mean_error(ratio,iteration,tags,verbose,variations,scale,X,Y):
         error = [error_single_parameter[k][i] for k in range(variations)]
         print ("Error with attribute %s: %f Ratio: %.1f" % (tags[i],reduce(lambda x,y: x + y, error ) / variations,ratio),file=open("Errors/Single Regression.txt","a+"))
     print("---------------------------------------------",file=open("Errors/Single Regression.txt","a+"))
-    
-    
-    
+
     
 
 
