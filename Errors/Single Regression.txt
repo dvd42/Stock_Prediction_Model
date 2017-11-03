@@ -1,0 +1,40 @@
+Running model with:
+Scale: 1000 
+Variations: 10
+Running model with:
+Scale: 1000 
+Variations: 10
+Error with attribute SP: 363.731235 Ratio: 0.8
+Error with attribute DAX: 269.106598 Ratio: 0.8
+Error with attribute FTSE: 269.720510 Ratio: 0.8
+Error with attribute NIKKEI: 365.112046 Ratio: 0.8
+Error with attribute BOVESPA: 352.915033 Ratio: 0.8
+Error with attribute EU: 242.070058 Ratio: 0.8
+Error with attribute EM: 229.736942 Ratio: 0.8
+---------------------------------------------
+Error with attribute SP: 351.874392 Ratio: 0.7
+Error with attribute DAX: 268.185579 Ratio: 0.7
+Error with attribute FTSE: 253.155281 Ratio: 0.7
+Error with attribute NIKKEI: 374.701234 Ratio: 0.7
+Error with attribute BOVESPA: 345.099487 Ratio: 0.7
+Error with attribute EU: 235.609409 Ratio: 0.7
+Error with attribute EM: 213.707137 Ratio: 0.7
+---------------------------------------------
+Error with attribute SP: 353.556329 Ratio: 0.6
+Error with attribute DAX: 274.265187 Ratio: 0.6
+Error with attribute FTSE: 256.897197 Ratio: 0.6
+Error with attribute NIKKEI: 384.618753 Ratio: 0.6
+Error with attribute BOVESPA: 354.489962 Ratio: 0.6
+Error with attribute EU: 233.723778 Ratio: 0.6
+Error with attribute EM: 232.526762 Ratio: 0.6
+---------------------------------------------
+Error with attribute SP: 366.725592 Ratio: 0.5
+Error with attribute DAX: 271.212468 Ratio: 0.5
+Error with attribute FTSE: 263.879165 Ratio: 0.5
+Error with attribute NIKKEI: 381.076352 Ratio: 0.5
+Error with attribute BOVESPA: 371.987510 Ratio: 0.5
+Error with attribute EU: 236.775091 Ratio: 0.5
+Error with attribute EM: 229.591801 Ratio: 0.5
+---------------------------------------------
+
+

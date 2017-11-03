@@ -1,0 +1,12 @@
+Running model with:
+Scale: 1000 
+Variations: 10
+Running model with:
+Scale: 1000 
+Variations: 10
+Error best 2 attributtes (EM,EU): 201.608055 Ratio: 0.8 
+Error best 2 attributtes (EM,EU): 186.149577 Ratio: 0.7 
+Error best 2 attributtes (EM,EU): 197.614572 Ratio: 0.6 
+Error best 2 attributtes (EM,EU): 194.018524 Ratio: 0.5 
+
+

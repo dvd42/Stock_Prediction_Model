@@ -1,0 +1,12 @@
+Running model with:
+Scale: 1000 
+Variations: 10
+Running model with:
+Scale: 1000 
+Variations: 10
+Standardized Error 204.910076 Ratio: 0.8 
+Standardized Error 193.921713 Ratio: 0.7 
+Standardized Error 200.599723 Ratio: 0.6 
+Standardized Error 195.939830 Ratio: 0.5 
+
+

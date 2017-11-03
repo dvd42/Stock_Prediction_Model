@@ -5,6 +5,7 @@ Created on Thu Nov 02 19:37:44 2017
 @author: Diego
 """
 
+from __future__ import print_function
 from matplotlib import pyplot as plt
 from sklearn.linear_model import LinearRegression
 from mpl_toolkits.mplot3d import axes3d, Axes3D
@@ -34,7 +35,7 @@ def unstandardized_regression(X_train,Y_train, X_val,Y_val,ratio):
 
 
 # Regression with each parameter individually"""
-def single_parameter_regression(X_train,Y_train,X_val,Y_val,ratio,iteration,variation,tags,verbose):
+def single_parameter_regression(X_train,Y_train,X_val,Y_val,ratio,iteration,variation,scale,tags,verbose):
     
     color_list = ['red','dodgerblue','green','slateblue','lime','maroon','orange']
     
@@ -51,22 +52,30 @@ def single_parameter_regression(X_train,Y_train,X_val,Y_val,ratio,iteration,vari
                 
         
         # Results plot
-        if verbose and variation == 0:
+        if variation == 0:
             plt.figure(str(i) + " Ratio: " + str(ratio))
             plt.title("Regression with parameter: " + tags[i] + " Split Ratio: " + str(ratio))
             plt.scatter(x_v[:, 0], Y_val, c=color_list[i])
             plt.plot(x_v[:, 0], regr.predict(x_v), label="Prediction", c='black')
             plt.xlabel(str(tags[i]) + " Stock Index ")
             plt.ylabel("Istanbul Stock Index")
-            plt.savefig("Regressions/Regression with parameter" + str(tags[i]) + str(ratio) + ".png",bbox_inches='tight')
+            if verbose:
+                plt.draw()
+                plt.pause(0.5)
+            else:
+                plt.savefig("Regressions/Scale " + str(scale) + "/Regression " + str(tags[i]) + " " + str(ratio) + ".png",bbox_inches='tight')
             plt.close()
         
-        if iteration == 1 and variation == 0 and verbose:
+        if iteration == 1 and variation == 0:
             #Histogram plot
             plt.figure("Histogram " + str(i))
             plt.title("Histogram Attribute: " + tags[i])
             plt.hist(x_t,bins=13,range=[np.min(x_t[:,0]),np.max(x_t[:,0])],color=color_list[i])
-            plt.savefig("Histograms/Histogram Attribute" + str(tags[i]) + ".png",bbox_inches='tight')
+            if verbose:
+                plt.draw()
+                plt.pause(0.5)
+            else:
+                plt.savefig("Histograms/Scale " + str(scale) + "/Histogram Attribute" + str(tags[i]) + ".png",bbox_inches='tight')
             plt.close()
             
     return error
@@ -81,7 +90,7 @@ def standardized_regression(X_train,Y_train, X_val, Y_val,ratio):
     return mean_squared_error(Y_val, s_regr.predict(x_s_val))
  
 
-def draw_3d(validation,result,ratio,variation,verbose,tags,min1,min2):
+def draw_3d(validation,result,ratio,variation,verbose,scale,tags,min1,min2):
     regr = regression(validation, result)
     prediction = regr.predict(validation)
 
@@ -102,7 +111,7 @@ def draw_3d(validation,result,ratio,variation,verbose,tags,min1,min2):
     zplot = W[0] * xplot + W[1] * yplot + W[2]
 
     # Draw points and the surface     
-    if variation == 0 and verbose:
+    if variation == 0:
         plt3d = plt.figure('Best 2 attributes ' + str(ratio)).gca(projection='3d')
         plt3d.set_xlabel(tags[min1] + ' Stock Index')
         plt3d.set_ylabel(tags[min2] + ' Stock Index')
@@ -110,11 +119,70 @@ def draw_3d(validation,result,ratio,variation,verbose,tags,min1,min2):
         plt3d.plot_surface(xplot,yplot,zplot, color='red')
         plt3d.scatter(validation[:,0],validation[:,1],result)
         
-        for angle in range(0, 361,60):
+        for angle in range(0, 361,30):
             plt3d.view_init(30, angle)
-            plt.savefig('3D/Best 2 attributes ' + str(ratio) + str(angle) + ".png",bbox_inches='tight')
+            if verbose:
+                plt.draw()
+                plt.pause(0.1)
+            else:    
+                plt.savefig("3D/Scale " + str(scale) + "/Best 2 attributes " + str(ratio) + " " + str(angle) + ".png",bbox_inches='tight')
         plt.close()
                
         
     
     return mean_squared_error(result,prediction)
+
+
+
+def get_best_attributes(error,pos):
+    
+      min1 = error[pos].index(sorted(error[pos])[0])
+      min2 = error[pos].index(sorted(error[pos])[1])
+    
+      return min1,min2
+  
+  
+def store_mean_error(ratio,iteration,tags,verbose,variations,scale,X,Y):
+    
+    
+    error = []
+    standardized_error = []
+    error_single_parameter = []
+    unstandardized_error = []
+    
+    for j in range(variations):
+        x_train, y_train, x_val, y_val = h.split_data(X, Y,train_ratio = ratio)
+        error_single_parameter.append(single_parameter_regression(x_train,y_train, x_val,y_val,ratio,iteration,j,scale,tags,verbose))
+        
+        #Get the 2 attributes with the smallest error
+        min1,min2 = get_best_attributes(error_single_parameter,j)
+        
+        error.append(draw_3d(x_val[:,[min1,min2]],np.reshape(y_val,(y_val.shape[0],1)),ratio,j,verbose,scale,tags,min1,min2))
+        standardized_error.append(standardized_regression(x_train,y_train, x_val,y_val,ratio))
+        unstandardized_error.append(unstandardized_regression(x_train,y_train, x_val,y_val,ratio))
+
+    
+    error = reduce(lambda x, y: x + y, error) / len(error)
+    standardized_error = reduce(lambda x, y: x + y, standardized_error) / len(standardized_error)
+    unstandardized_error = reduce(lambda x, y: x + y, unstandardized_error) / len(unstandardized_error)
+    
+    print ("Error best 2 attributtes (%s,%s): %f Ratio: %.1f " % (tags[min1],tags[min2],error,ratio),file=open("Errors/Best Error.txt","a+"))
+    print ("Standardized Error %f Ratio: %.1f " % (standardized_error,ratio),file=open("Errors/Standarized Regression.txt","a+"))
+    print ("Unstandardized Error: %f Ratio: %.1f " % (unstandardized_error,ratio),file=open("Errors/Unstandardized Regression.txt","a+"))
+    
+    for i in range(tags.size):
+        error = [error_single_parameter[k][i] for k in range(variations)]
+        print ("Error with attribute %s: %f Ratio: %.1f" % (tags[i],reduce(lambda x,y: x + y, error ) / variations,ratio),file=open("Errors/Single Regression.txt","a+"))
+    print("---------------------------------------------",file=open("Errors/Single Regression.txt","a+"))
+    
+    
+    
+    
+
+
+
+
+
+
+
+
