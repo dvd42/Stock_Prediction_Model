@@ -1,0 +1,4 @@
+*.pyc
+.3D/*
+.Histograms/*
+.Regressions/*
