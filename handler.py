@@ -27,24 +27,24 @@ def process_runtime_arguments():
   
     data = pd.read_csv(sys.argv[1])
     
-    # Custom Regression parameters
-    custom = False
-    alpha = 0
-    epsilon = 0
-    max_iter = 0
-    
   
     verbose = True if "-v" in argvs else False
     scale = int(argvs[argvs.index("-s") + 1]) if "-s" in argvs else 1
     variations = int(argvs[argvs.index("-d") + 1]) if "-d" in argvs else 1
     
+    # Custom Regression parameters
+    custom = False
+    alpha = 0 
+    epsilon = 0
+    max_iter = 0
                    
     if "-c" in argvs:
         custom = True  
-        alpha = float(argvs[argvs.index("-c") + 1]) 
-        epsilon = float(argvs[argvs.index("-c") + 2]) 
+        alpha = float(argvs[argvs.index("-c") + 1])
+        epsilon = float(argvs[argvs.index("-c") + 2])
         max_iter = int(argvs[argvs.index("-c") + 3])
-
+        
+        
     
     return verbose,scale,variations,custom,alpha,epsilon,max_iter,data
 
