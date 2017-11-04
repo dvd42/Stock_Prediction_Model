@@ -2,9 +2,9 @@ import regression as r
 import handler as h
 
 # Initialization
-verbose,scale,variations,data = h.process_runtime_arguments()
-h.create_dir(scale,verbose)
-h.add_file_header(scale,variations)
+verbose,scale,variations,custom,alpha,epsilon,max_iter,data = h.process_runtime_arguments()
+path = h.create_dir(scale,verbose,custom)
+h.add_file_header(scale,variations,path)
 
 
 print "Running model with:"
@@ -25,10 +25,10 @@ tags = data.iloc[0,3:].values
 for i in range(1,5):
         
     ratio = 0.9 - i/float(10)
-    r.store_mean_error(ratio,i,tags,verbose,variations,scale,X,Y)
+    r.store_mean_error(ratio,i,tags,verbose,variations,scale,X,Y,path,custom,alpha,epsilon,max_iter)
     
     
-h.add_file_footer()
+h.add_file_footer(path)
     
     
     

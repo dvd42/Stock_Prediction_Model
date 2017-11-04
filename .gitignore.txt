@@ -2,3 +2,5 @@
 .3D/*
 .Histograms/*
 .Regressions/*
+.Custom/*
+.Errors/*

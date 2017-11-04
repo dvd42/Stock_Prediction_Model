@@ -7,12 +7,13 @@ Created on Thu Nov 02 19:37:44 2017
 
 from __future__ import print_function
 from matplotlib import pyplot as plt
-from sklearn.linear_model import LinearRegression
 from mpl_toolkits.mplot3d import axes3d, Axes3D
+from sklearn.linear_model import LinearRegression
+
 import numpy as np
 
-
 import handler as h
+import Custom_Regresor as cr
 
 # Evaluate hypotesis
 def mean_squared_error(v1, v2):
@@ -35,7 +36,7 @@ def unstandardized_regression(X_train,Y_train, X_val,Y_val,ratio):
 
 
 # Regression with each parameter individually"""
-def single_parameter_regression(X_train,Y_train,X_val,Y_val,ratio,iteration,variation,scale,tags,verbose):
+def single_parameter_regression(X_train,Y_train,X_val,Y_val,ratio,iteration,variation,scale,tags,verbose,custom,alpha,epsilon,max_iter,path):
     
     color_list = ['red','dodgerblue','green','slateblue','lime','maroon','orange']
     
@@ -47,7 +48,14 @@ def single_parameter_regression(X_train,Y_train,X_val,Y_val,ratio,iteration,vari
         x_t = np.reshape(x_t,(x_t.shape[0],1))
         x_v = np.reshape(x_v,(x_v.shape[0],1))
         
-        regr = regression(x_t, Y_train)
+        
+       
+        if not custom:
+            regr = regression(x_t, Y_train)
+        else:
+            regr = cr.Regressor(1,1,alpha)
+            regr.train(max_iter,epsilon,X_train,Y_train)
+        
         error.append(mean_squared_error(Y_val, regr.predict(x_v)))
                 
         
@@ -63,7 +71,7 @@ def single_parameter_regression(X_train,Y_train,X_val,Y_val,ratio,iteration,vari
                 plt.draw()
                 plt.pause(0.5)
             else:
-                plt.savefig("Regressions/Scale " + str(scale) + "/Regression " + str(tags[i]) + " " + str(ratio) + ".png",bbox_inches='tight')
+                plt.savefig(path + "Regressions/Scale " + str(scale) + "/Regression " + str(tags[i]) + " " + str(ratio) + ".png",bbox_inches='tight')
             plt.close()
         
         if iteration == 1 and variation == 0:
@@ -142,7 +150,7 @@ def get_best_attributes(error,pos):
       return min1,min2
   
   
-def store_mean_error(ratio,iteration,tags,verbose,variations,scale,X,Y):
+def store_mean_error(ratio,iteration,tags,verbose,variations,scale,X,Y,path,custom,alpha,epsilon,max_iter):
     
     
     error = []
@@ -152,7 +160,7 @@ def store_mean_error(ratio,iteration,tags,verbose,variations,scale,X,Y):
     
     for j in range(variations):
         x_train, y_train, x_val, y_val = h.split_data(X, Y,train_ratio = ratio)
-        error_single_parameter.append(single_parameter_regression(x_train,y_train, x_val,y_val,ratio,iteration,j,scale,tags,verbose))
+        error_single_parameter.append(single_parameter_regression(x_train,y_train, x_val,y_val,ratio,iteration,j,scale,tags,verbose,custom,alpha,epsilon,max_iter,path))
         
         #Get the 2 attributes with the smallest error
         min1,min2 = get_best_attributes(error_single_parameter,j)
@@ -172,8 +180,8 @@ def store_mean_error(ratio,iteration,tags,verbose,variations,scale,X,Y):
     
     for i in range(tags.size):
         error = [error_single_parameter[k][i] for k in range(variations)]
-        print ("Error with attribute %s: %f Ratio: %.1f" % (tags[i],reduce(lambda x,y: x + y, error ) / variations,ratio),file=open("Errors/Single Regression.txt","a+"))
-    print("---------------------------------------------",file=open("Errors/Single Regression.txt","a+"))
+        print ("Error with attribute %s: %f Ratio: %.1f" % (tags[i],reduce(lambda x,y: x + y, error ) / variations,ratio),file=open(path + "Errors/Single Regression.txt","a+"))
+    print("---------------------------------------------",file=open(path + "Errors/Single Regression.txt","a+"))
 
     
 
