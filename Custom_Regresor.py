@@ -34,8 +34,6 @@ class Regressor(object):
 
     def train(self, max_iter, epsilon,x_train,y_train):
         while(self.old_theta0 - self.theta0 > epsilon and self.old_theta1 - self.theta1 > epsilon and max_iter > 0):
-            print self.theta0
-            print self.theta1
             prediction = self.predict(x_train)
             self.__update(y_train,prediction)
             max_iter -= 1
