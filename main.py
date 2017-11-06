@@ -6,7 +6,6 @@ verbose,scale,variations,custom,alpha,epsilon,max_iter,data = h.process_runtime_
 path = h.create_dir(scale,verbose,custom)
 h.add_file_header(scale,variations,path)
 
-
 print "Running model with:"
 print "Scale: %d " % scale
 print "Variations: %d" % variations
