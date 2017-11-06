@@ -1,5 +1,9 @@
 import numpy as np
+from matplotlib import pyplot as plt
 
+
+def mean_squared_error(v1, v2):
+    return((v1-v2)**2).mean()
 
 class Regressor(object):
     def __init__(self,theta0,theta1,alpha):
@@ -22,6 +26,29 @@ class Regressor(object):
         
         return prediction
 
+    def plot(self,cost,verbose,scale,tag,alpha,epsilon):
+       
+        a = []
+        b = []
+        for i in range(len(cost)):
+            a.append(cost[i])
+            b.append(i)
+        
+        plt.title("Gradient descent for " + tag  + "\n alpha: " + str(alpha) + "\n epsilon: "  + str(epsilon))
+        plt.xlabel("Iteration")
+        plt.ylabel("Cost")
+        plt.plot(b,a)
+        
+        if verbose:
+            plt.draw()
+            plt.pause(0.5)
+        else:
+            plt.savefig("Custom/Descent/Scale " + str(scale) +"/Descent" + str(tag) + ".png",bbox_inches='tight')
+        
+        plt.close()
+        
+        
+
     def __update(self, y_train,prediction):
         #prediccio hy i real y
         temp1 = self.theta1 - self.difx1(y_train,prediction)
@@ -33,7 +60,12 @@ class Regressor(object):
          
 
     def train(self, max_iter, epsilon,x_train,y_train):
-        while(self.old_theta0 - self.theta0 > epsilon and self.old_theta1 - self.theta1 > epsilon and max_iter > 0):
+        cost = []
+        i = 0
+        while(self.old_theta0 - self.theta0 > epsilon and self.old_theta1 - self.theta1 > epsilon and i < max_iter):
             prediction = self.predict(x_train)
             self.__update(y_train,prediction)
-            max_iter -= 1
+            cost.append(mean_squared_error(prediction,y_train))
+            i += 1
+    
+        return cost

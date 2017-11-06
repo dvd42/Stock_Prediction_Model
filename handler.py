@@ -55,8 +55,13 @@ def create_dir(scale,verbose,custom):
     if not os.path.exists(path + "Errors"):
         os.makedirs(path + "Errors")
         
+    
     if not os.path.exists("Errors"):
         os.makedirs("Errors")
+    
+    if not os.path.exists(path + "Descent/Scale " + str(scale)):
+        os.makedirs(path + "Descent/Scale " + str(scale))
+    
     
     if not verbose:
         if not os.path.exists("3D/Scale " +str(scale)):

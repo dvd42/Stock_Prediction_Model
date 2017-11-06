@@ -54,8 +54,11 @@ def single_parameter_regression(X_train,Y_train,X_val,Y_val,ratio,iteration,vari
             regr = regression(x_t, Y_train)
         else:
             regr = cr.Regressor(1,1,alpha)
-            regr.train(max_iter,epsilon,X_train,Y_train)
-        
+            cost = regr.train(max_iter,epsilon,X_train,Y_train)
+            if variation == 0:
+                regr.plot(cost,verbose,scale,tags[i],alpha,epsilon)
+            
+            
         error.append(mean_squared_error(Y_val, regr.predict(x_v)))
                 
         
@@ -73,6 +76,7 @@ def single_parameter_regression(X_train,Y_train,X_val,Y_val,ratio,iteration,vari
             else:
                 plt.savefig(path + "Regressions/Scale " + str(scale) + "/Regression " + str(tags[i]) + " " + str(ratio) + ".png",bbox_inches='tight')
             plt.close()
+                      
         
         if iteration == 1 and variation == 0:
             #Histogram plot
